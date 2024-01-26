@@ -1,0 +1,283 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Jan 22, 2024 at 05:47 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `bingos`
+--
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetRandomBingoTemplates` ()   BEGIN
+    SELECT * FROM bingo_templates ORDER BY RAND() LIMIT 3;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertBingoBlog` (IN `p_user_id` INT, IN `p_title` VARCHAR(255), IN `p_comment` TEXT, IN `p_photo_path` VARCHAR(1024), IN `p_template_id` INT)   BEGIN
+    DECLARE targetFile VARCHAR(1024);
+    SET targetFile = CONCAT('path/to/uploaded/photos/', p_photo_path);  -- Замените путь на ваш путь для сохранения фотографий
+
+    INSERT INTO blogs (user_id, title, content, image) 
+    VALUES (p_user_id, p_title, CONCAT('Comment: ', p_comment), targetFile);
+
+    INSERT INTO bingo (user_id, template_id, completed) 
+    VALUES (p_user_id, p_template_id, 1);
+    
+    -- Вы можете дополнительно обновить статус шаблона, если необходимо
+    -- UPDATE bingo_templates SET status = 'completed' WHERE template_id = p_template_id;
+
+END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bingo`
+--
+
+CREATE TABLE `bingo` (
+  `bingo_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `template_id` int(11) DEFAULT NULL,
+  `completed` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bingo_templates`
+--
+
+CREATE TABLE `bingo_templates` (
+  `template_id` int(11) NOT NULL,
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bingo_templates`
+--
+
+INSERT INTO `bingo_templates` (`template_id`, `description`) VALUES
+(1, 'Visit a museum'),
+(2, 'Write a short story'),
+(3, 'Learn to juggle'),
+(4, 'Take a cooking class'),
+(5, 'Go stargazing'),
+(6, 'Try a new sport'),
+(7, 'Volunteer at a local charity'),
+(8, 'Take a scenic hike'),
+(9, 'Visit a farmer\'s market'),
+(10, 'Learn to play a musical instrument'),
+(11, 'Create a piece of art'),
+(12, 'Try a new type of tea or coffee'),
+(13, 'Host a game night with friends'),
+(14, 'Explore a nearby town or city'),
+(15, 'Take a dance class'),
+(16, 'Read a book in a genre you normally wouldn\'t'),
+(17, 'Learn a magic trick'),
+(18, 'Attend a live performance (play, concert, etc.)'),
+(19, 'Take a day trip to the beach'),
+(20, 'Write and perform a short play'),
+(21, 'Visit a botanical garden'),
+(22, 'Try a new workout routine'),
+(23, 'Learn to meditate'),
+(24, 'Visit an escape room'),
+(25, 'Go on a photography adventure'),
+(26, 'Create a DIY project'),
+(27, 'Attend a cultural festival'),
+(28, 'Go on a nature walk'),
+(29, 'Attend a comedy show'),
+(30, 'Try a new hairstyle'),
+(31, 'Take a pottery class'),
+(32, 'Host a themed dinner party'),
+(33, 'Explore a historical site'),
+(34, 'Learn to make homemade pasta'),
+(35, 'Take a scenic train ride'),
+(36, 'Create a vision board'),
+(37, 'Try a new type of sushi'),
+(38, 'Visit a planetarium'),
+(39, 'Learn a dance from a different culture'),
+(40, 'Go on a zip-lining adventure'),
+(41, 'Host a karaoke night with friends'),
+(42, 'Take a painting class'),
+(43, 'Try a new outdoor activity'),
+(44, 'Visit a historical museum'),
+(45, 'Learn a new card game'),
+(46, 'Visit a museum'),
+(47, 'Write a short story'),
+(48, 'Learn to juggle'),
+(49, 'Take a cooking class'),
+(50, 'Go stargazing');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blogs`
+--
+
+CREATE TABLE `blogs` (
+  `blog_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `content` text DEFAULT NULL,
+  `image` varchar(1024) DEFAULT NULL,
+  `post_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `likes_count` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `profilePicture` varchar(255) DEFAULT NULL,
+  `firstName` varchar(128) DEFAULT NULL,
+  `lastName` varchar(128) DEFAULT NULL,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `UpdatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `completed_bingo` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `Email`, `Password`, `profilePicture`, `firstName`, `lastName`, `CreatedAt`, `UpdatedAt`, `completed_bingo`) VALUES
+(13, 'test@mail.ru', '$2y$10$xaeV/CsgWZZwMEXUbQiQSOLM.L7nj6XjpvPmAYhAKwErVYgV3jqka', NULL, NULL, NULL, '2024-01-22 16:45:28', '2024-01-22 16:45:28', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_selected_bingos`
+--
+
+CREATE TABLE `user_selected_bingos` (
+  `user_id` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_selected_bingos`
+--
+
+INSERT INTO `user_selected_bingos` (`user_id`, `template_id`) VALUES
+(3, 1),
+(3, 14),
+(3, 48);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `bingo`
+--
+ALTER TABLE `bingo`
+  ADD PRIMARY KEY (`bingo_id`),
+  ADD KEY `bingo_user_fk` (`user_id`),
+  ADD KEY `bingo_template_fk` (`template_id`);
+
+--
+-- Indexes for table `bingo_templates`
+--
+ALTER TABLE `bingo_templates`
+  ADD PRIMARY KEY (`template_id`);
+
+--
+-- Indexes for table `blogs`
+--
+ALTER TABLE `blogs`
+  ADD PRIMARY KEY (`blog_id`),
+  ADD KEY `blogs_user_fk` (`user_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `Email` (`Email`);
+
+--
+-- Indexes for table `user_selected_bingos`
+--
+ALTER TABLE `user_selected_bingos`
+  ADD PRIMARY KEY (`user_id`,`template_id`),
+  ADD KEY `template_id` (`template_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `bingo`
+--
+ALTER TABLE `bingo`
+  MODIFY `bingo_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bingo_templates`
+--
+ALTER TABLE `bingo_templates`
+  MODIFY `template_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
+-- AUTO_INCREMENT for table `blogs`
+--
+ALTER TABLE `blogs`
+  MODIFY `blog_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=280;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `bingo`
+--
+ALTER TABLE `bingo`
+  ADD CONSTRAINT `bingo_template_fk` FOREIGN KEY (`template_id`) REFERENCES `bingo_templates` (`template_id`),
+  ADD CONSTRAINT `bingo_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `blogs`
+--
+ALTER TABLE `blogs`
+  ADD CONSTRAINT `blogs_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `user_selected_bingos`
+--
+ALTER TABLE `user_selected_bingos`
+  ADD CONSTRAINT `user_selected_bingos_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `bingo_templates` (`template_id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
