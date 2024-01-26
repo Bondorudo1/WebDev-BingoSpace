@@ -3,6 +3,7 @@ include('includes/init.php');
 include('includes/bingo-logic.php');
 include('includes/head.php');
 
+// hello
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['blog_id'])) {
     // Fetch the blog post details
     $blogId = $_GET['blog_id'];
